@@ -37,3 +37,7 @@ Function name | Paramaters | Description
 `get_total_pages` | `part_type` | This function simply returns the amount of pages of results there are for a particular `part_type`
 
 **[Examples](https://github.com/thatguywiththatname/PcPartPicker-API/tree/master/examples)**
+
+# ToDo
+
+ - Allow users to choose language subdomain, not just `uk.pcpartpicker.com` 
