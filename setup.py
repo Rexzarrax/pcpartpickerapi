@@ -11,17 +11,14 @@ with open(path.join(here, "README.rst"), encoding="utf-8") as f:
 
 setup(
     name="PCPartPicker_API",
-    version="0.0.1",
+    version="0.0.2",
     description="A Python3 API for getting part information from PcPartPicker",
     long_description=long_description,
     url="https://github.com/thatguywiththatname/PcPartPicker-API",
     classifiers=[
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3"
     ],
     keywords="PCPartPicker API scraping",
     packages=find_packages(exclude=["contrib", "docs", "tests", "examples"]),
