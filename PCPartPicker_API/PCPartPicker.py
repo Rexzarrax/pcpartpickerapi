@@ -13,15 +13,25 @@ def set_region(region):
         raise ValueError("region not supported")
 
 class parts(object):
-    # part_url = base_url + "/product/:product_id"
-    pass
+    """
+    For scraping individual product pages, such as
+    https://pcpartpicker.com/product/mV98TW
+    """
+
+    @staticmethod
+    def get_part(part_id):
+        r = get(base_url + "/product/" + part_id)
+        soup = BeautifulSoup(r, "html.parser")
 
 class lists(object):
+    """
+    For scraping product lists such as
+    https://pcpartpicker.com/products/cpu-cooler/
+    """
 
     @staticmethod
     def _get_page(part_type, page_num, return_max_pagenum=False):
-        page_url = base_url + "/products/{}/fetch?page={}"
-        r = get(page_url.format(part_type, page_num))
+        r = get(base_url + "/products/" + part_type + "/fetch?page=" + page_num)
         parsed = jsonloads(r.content.decode("utf-8"))
         if return_max_pagenum:
             return parsed["result"]["paging_data"]["page_blocks"][-1]["page"]
@@ -35,7 +45,7 @@ class lists(object):
         return pages._get_page(part_type, 1, True)
 
     @staticmethod
-    def get_part(part_type, page_num=0):
+    def get_list(part_type, page_num=0):
         """
         returns results for $page_num
         if $page_num left to default, get all pages
@@ -44,7 +54,7 @@ class lists(object):
             raise ValueError("part_type invalid")
 
         if page_num == 0:
-            start_page_num, end_page_num = 1, pages._get_page(part_type, 1, True)
+            start_page_num, end_page_num = 1, pages.total_pages(part_type, 1, True)
         else:
             start_page_num, end_page_num = page_num, page_num
 
