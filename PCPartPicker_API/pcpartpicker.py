@@ -12,17 +12,6 @@ def set_region(region):
     else:
         raise ValueError("region not supported")
 
-class parts(object):
-    """
-    For scraping individual product pages, such as
-    https://pcpartpicker.com/product/mV98TW
-    """
-
-    @staticmethod
-    def get_part(part_id):
-        r = get(base_url + "/product/" + part_id)
-        soup = BeautifulSoup(r, "html.parser")
-
 class lists(object):
     """
     For scraping product lists such as
@@ -33,7 +22,7 @@ class lists(object):
     def _get_page(part_type, page_num, return_max_pagenum=False):
         if part_type not in lookup:
             raise ValueError("part_type invalid")
-        r = get(base_url + "/products/" + part_type + "/fetch?page=" + page_num)
+        r = get(base_url + "/products/" + part_type + "/fetch?page=" + str(page_num))
         parsed = jsonloads(r.content.decode("utf-8"))
         if return_max_pagenum:
             return parsed["result"]["paging_data"]["page_blocks"][-1]["page"]
@@ -44,7 +33,7 @@ class lists(object):
         """
         returns the total number of pages for $part_type
         """
-        return pages._get_page(part_type, 1, True)
+        return lists._get_page(part_type, 1, True)
 
     @staticmethod
     def get_list(part_type, page_num=0):
@@ -53,14 +42,14 @@ class lists(object):
         if $page_num left to default, get all pages
         """
         if page_num == 0:
-            start_page_num, end_page_num = 1, pages.total_pages(part_type, 1, True)
+            start_page_num, end_page_num = 1, lists.total_pages(part_type, 1, True)
         else:
             start_page_num, end_page_num = page_num, page_num
 
         parsed_html = []
         for page_num in range(start_page_num, end_page_num+1):
-            soup = pages._get_page(part_type, page_num)
-            for row in soup.findAll("tr"):
+            soup = lists._get_page(part_type, page_num)
+            for row in soup.find_all("tr"):
                 row_elements = {}
                 for count, value in enumerate(row):
                     text = value.get_text().strip()

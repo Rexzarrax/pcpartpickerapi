@@ -12,8 +12,6 @@ Currently this library contains these features:
 
  - The `lists` class - for interacting with pages that are lists of products, as seen under the "browse by individual parts" tab on the PCPartPicker website (such as [products/cpu-cooler](https://pcpartpicker.com/products/cpu-cooler)). All product lists are supported except the ones under the `SOFTWARE` catergory, although those may be supported in the future
 
- - The `parts` class - (will be) a class for interacting with individual part pages, such as https://pcpartpicker.com/product/mV98TW
-
 # Installation
 
 `pip install PCPartPicker_API`
@@ -67,5 +65,4 @@ Function name | Paramaters | Description
 
 # ToDo
 
- - write `parts` class
  - support the `SOFTWARE` catergory in `pcpartpicker.lists`
