@@ -31,6 +31,8 @@ class lists(object):
 
     @staticmethod
     def _get_page(part_type, page_num, return_max_pagenum=False):
+        if part_type not in lookup:
+            raise ValueError("part_type invalid")
         r = get(base_url + "/products/" + part_type + "/fetch?page=" + page_num)
         parsed = jsonloads(r.content.decode("utf-8"))
         if return_max_pagenum:
@@ -50,9 +52,6 @@ class lists(object):
         returns results for $page_num
         if $page_num left to default, get all pages
         """
-        if part_type not in lookup:
-            raise ValueError("part_type invalid")
-
         if page_num == 0:
             start_page_num, end_page_num = 1, pages.total_pages(part_type, 1, True)
         else:
