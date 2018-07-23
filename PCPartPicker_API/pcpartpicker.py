@@ -42,7 +42,7 @@ class lists(object):
         if $page_num left to default, get all pages
         """
         if page_num == 0:
-            start_page_num, end_page_num = 1, lists.total_pages(part_type, 1, True)
+            start_page_num, end_page_num = 1, lists.total_pages(part_type)
         else:
             start_page_num, end_page_num = page_num, page_num
 
