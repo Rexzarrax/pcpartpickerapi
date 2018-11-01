@@ -1,5 +1,5 @@
 from json import loads as jsonloads
-from .productsData import productLookup
+from ._productsData import productLookup
 from bs4 import BeautifulSoup
 from requests import get
 
