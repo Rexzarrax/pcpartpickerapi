@@ -1,11 +1,9 @@
 """
-Each row contains multiple columns and
-the only way to know what the columns
-text is, is by numbering them (as they
-are always in the same order)
+Each row contains multiple columns and the only way to know what the columns
+text is, is by numbering them (as they are always in the same order)
 """
 
-lookup = {
+productLookup = {
     "cpu": {
         2: "speed",
         3: "cores",
