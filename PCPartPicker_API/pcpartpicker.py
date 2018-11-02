@@ -11,10 +11,11 @@ def setRegion(region):
     "au", "be", "ca", "de", "es", "fr", "in", "ie", "it", "nz", "uk", "us"
     """
     global baseURL
+    region = region.lower()
     if region in ["au", "be", "ca", "de", "es", "fr", "in", "ie", "it", "nz", "uk", "us"]:
         baseURL = "https://" + ((region + ".") if region != "us" else "") + "pcpartpicker.com"
     else:
-        raise ValueError("region not supported")
+        raise ValueError("region \"{}\" not supported".format(region))
 
 class productLists(object):
     """
@@ -54,30 +55,30 @@ class productLists(object):
         else:
             start_pageNum, end_pageNum = pageNum, pageNum
 
-        parsedHTML = []
+        cpuList = []
         for pageNum in range(start_pageNum, end_pageNum+1):
             soup = lists._getPage(partType, pageNum)
             for row in soup.find_all("tr"):
-                rowElements = {}
+                cpuDetails = {}
                 for count, value in enumerate(row):
                     text = value.get_text().strip()
 
                     if count in productLookup[partType]:
-                        rowElements[productLookup[partType][count]] = text
+                        cpuDetails[productLookup[partType][count]] = text
                     elif count == 1:
-                        rowElements["name"] = text
+                        cpuDetails["name"] = text
                     elif count == len(row)-2:
-                        rowElements["price"] = text
+                        cpuDetails["price"] = text
                     elif count == len(row)-3:
-                        rowElements["ratings"] = text.replace("(", "").replace(")", "")
+                        cpuDetails["ratings"] = text.replace("(", "").replace(")", "")
                     else:
                         try:
                             if value.a["class"] == ["btn-mds", "pp_add_part"]:
-                                rowElements["id"] = value.a["href"].replace("#", "")
+                                cpuDetails["id"] = value.a["href"].replace("#", "")
                         except TypeError:
                             pass  # Not <a> tag
                         except KeyError:
                             pass  # No class
 
-                parsedHTML.append(rowElements)
-        return parsedHTML
+                cpuList.append(cpuDetails)
+        return cpuList
