@@ -35,7 +35,7 @@ for cpu in cpu_info:
     print(cpu["name"], ":", cpu["price"])
 
 # Change the region to UK (the default is US)
-pcpp.set_region("uk")
+pcpp.setRegion("uk")
 print("\nRegion changed to UK")
 
 # Pull info from all CPU pages (this may take a minute)
