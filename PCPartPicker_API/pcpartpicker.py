@@ -7,7 +7,7 @@ baseURL = "https://pcpartpicker.com"
 
 def setRegion(region):
     """
-    Change the region for the pcpartpicker.com requests. Supports:
+    Change the region for the pcpartpicker.com requests. Supports (case insesetive):
     "au", "be", "ca", "de", "es", "fr", "in", "ie", "it", "nz", "uk", "us"
     """
     global baseURL

@@ -1,3 +1,4 @@
+:: Build everything needed and upload to PyPi using twine (recommended)
 @echo off
 echo ! Has README.rst been updated? !
 pause
