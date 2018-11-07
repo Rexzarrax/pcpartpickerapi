@@ -42,7 +42,7 @@ class productLists(object):
         """
         Returns the total number of pages for partType
         """
-        return lists._getPage(partType, 1, True)
+        return productLists._getPage(partType, 1, True)
 
     @staticmethod
     def getProductList(partType, pageNum=0):
@@ -51,13 +51,13 @@ class productLists(object):
         pages. pageNum starts at 1
         """
         if pageNum == 0:
-            start_pageNum, end_pageNum = 1, lists.totalPages(partType)
+            start_pageNum, end_pageNum = 1, productLists.totalPages(partType)
         else:
             start_pageNum, end_pageNum = pageNum, pageNum
 
         cpuList = []
         for pageNum in range(start_pageNum, end_pageNum+1):
-            soup = lists._getPage(partType, pageNum)
+            soup = productLists._getPage(partType, pageNum)
             for row in soup.find_all("tr"):
                 cpuDetails = {}
                 for count, value in enumerate(row):
