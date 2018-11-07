@@ -27,22 +27,22 @@ from PCPartPicker_API import pcpartpicker as pcpp
 # Print the total amount of pages for CPUs
 print("Total CPU pages:", pcpp.productLists.totalPages("cpu"))
 
-# # Pull info from page 1 of CPUs
+# Pull info from page 1 of CPUs
 cpu_info = pcpp.productLists.getProductList("cpu", 1)
 
-# # Print the names and prices of all the CPUs on the page
+# Print the names and prices of all the CPUs on the page
 for cpu in cpu_info:
     print(cpu["name"], ":", cpu["price"])
 
-# # Change the region to UK (the default is US)
+# Change the region to UK (the default is US)
 pcpp.setRegion("uk")
 print("\nRegion changed to UK")
 
-# # Pull info from all CPU pages (this may take a minute)
+# Pull info from all CPU pages (this may take a minute)
 cpu_info_uk = pcpp.productLists.getProductList("cpu")
 
-# # Print the names and prices of all the CPUs on all pages
-# # The prices will now be in GBP (£) instead of USD ($)
+# Print the names and prices of all the CPUs on all pages
+# The prices will now be in GBP (£) instead of USD ($)
 for cpu in cpu_info_uk:
     print(cpu["name"], ":", cpu["price"])
 ```
