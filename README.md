@@ -2,26 +2,27 @@
 
 Python3 API for retrieving information from [PcPartPicker](https://pcpartpicker.com)
 
-### What can this do?
+**What can this API do?**
 
 Currently this library contains these features:
 
- - Select what region you want to use ("uk", "ca", etc.)
+- Select what region you want to use ("uk", "ca", etc.)
 
- - The `productLists` class - for interacting with pages that are lists of products, as seen under the "browse by individual parts" tab on the PCPartPicker website (such as [products/cpu-cooler](https://pcpartpicker.com/products/cpu-cooler)). All product lists are supported except the ones under the `SOFTWARE` catergory, although those may be supported in the future
+- The `productLists` class - for interacting with pages that are lists of products, as seen under the "browse by individual parts" tab on the PCPartPicker website (such as [products/cpu-cooler](https://pcpartpicker.com/products/cpu-cooler)). All product lists are supported except the ones under the `SOFTWARE` catergory, although those may be supported in the future
 
-# Installation
+## Installation
 
 `pip install PCPartPicker_API`
 
 See the PyPi page [here](https://pypi.python.org/pypi/PCPartPicker-API)
 
-# Quickstart
+## Quickstart
 
 A quick demonstration of what this API can do
 
 ```python
 # Import pcpartpicker
+# Imported here as pcpp to makes lines a little shorter
 from PCPartPicker_API import pcpartpicker as pcpp
 
 # Print the total amount of pages for CPUs
@@ -47,7 +48,7 @@ for cpu in cpu_info_uk:
     print(cpu["name"], ":", cpu["price"])
 ```
 
-# Documentation
+## Documentation
 
 To start using the API, import `pcpartpicker` from `PCPartPicker_API`
 
@@ -61,6 +62,6 @@ Function name | Paramaters | Description
 `productLists.getList` | `partType, pageNum=0` | This function returns a list of dictionaries. Each `partType` will have different dictionary keys. To see what keys exist for each `partType`, you can look them up in [_productsData](https://github.com/thatguywiththatname/PcPartPicker-API/blob/master/PCPartPicker_API/_productsData.py). Every dictionary will always contain the keys `name`, `price`, `ratings` and `id` (although they may not always have a value). `pageNum` is set to `0` by default. `0` means it will scrape all pages and gather all the info it can. If you only want to get information from, for example, page 2 of the cpu results, you would set `pageNum` to `2`
 `productLists.totalPages` | `partType` | This function simply returns the amount of pages of results there are for a particular `partType`
 
-# ToDo
+## ToDo
 
- - Support the `SOFTWARE` catergory in `pcpartpicker.productLists`
+- Support the `SOFTWARE` catergory in `pcpartpicker.productLists`

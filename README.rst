@@ -4,8 +4,7 @@ PCPartPicker-API
 Python3 API for retrieving information from
 `PcPartPicker <https://pcpartpicker.com>`__
 
-What can this do?
-~~~~~~~~~~~~~~~~~
+**What can this API do?**
 
 Currently this library contains these features:
 
@@ -19,7 +18,7 @@ Currently this library contains these features:
    ``SOFTWARE`` catergory, although those may be supported in the future
 
 Installation
-============
+------------
 
 ``pip install PCPartPicker_API``
 
@@ -27,13 +26,14 @@ See the PyPi page
 `here <https://pypi.python.org/pypi/PCPartPicker-API>`__
 
 Quickstart
-==========
+----------
 
 A quick demonstration of what this API can do
 
 .. code:: python
 
     # Import pcpartpicker
+    # Imported here as pcpp to makes lines a little shorter
     from PCPartPicker_API import pcpartpicker as pcpp
 
     # Print the total amount of pages for CPUs
@@ -59,7 +59,7 @@ A quick demonstration of what this API can do
         print(cpu["name"], ":", cpu["price"])
 
 Documentation
-=============
+-------------
 
 To start using the API, import ``pcpartpicker`` from
 ``PCPartPicker_API``
@@ -80,7 +80,7 @@ A list of ``partType``\ s and their dictionary keys are available in
 +-------------------------------+---------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ToDo
-====
+----
 
 -  Support the ``SOFTWARE`` catergory in ``pcpartpicker.productLists``
 
