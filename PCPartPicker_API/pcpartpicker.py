@@ -3,6 +3,7 @@ from ._productsData import productLookup
 from bs4 import BeautifulSoup
 from requests import get
 
+# TODO: Do this without using a global variable
 baseURL = "https://pcpartpicker.com"
 
 def setRegion(region):
