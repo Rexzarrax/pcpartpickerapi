@@ -3,20 +3,34 @@ from ._productsData import productLookup
 from bs4 import BeautifulSoup
 from requests import get
 
-# TODO: Do this without using a global variable
-baseURL = "https://pcpartpicker.com"
 
-def setRegion(region):
+def _getRegionURL(region):
     """
-    Change the region for the pcpartpicker.com requests. Supports (case insesetive):
-    "au", "be", "ca", "de", "es", "fr", "in", "ie", "it", "nz", "uk", "us"
+    Returns the URL fo pcpartpicker.com requests for that region
+    Supports (case insesetive):
+        "au", "be", "ca", "de", "es", "fr", "in", "ie", "it", "nz", "uk", "us"
     """
-    global baseURL
     region = region.lower()
-    if region in ["au", "be", "ca", "de", "es", "fr", "in", "ie", "it", "nz", "uk", "us"]:
-        baseURL = "https://" + ((region + ".") if region != "us" else "") + "pcpartpicker.com"
+    if region in [
+        "au",
+        "be",
+        "ca",
+        "de",
+        "es",
+        "fr",
+        "in",
+        "ie",
+        "it",
+        "nz",
+        "uk",
+        "us",
+    ]:
+        return (
+            "https://" + ((region + ".") if region != "us" else "") + "pcpartpicker.com"
+        )
     else:
-        raise ValueError("region \"{}\" not supported".format(region))
+        raise ValueError('region "{}" not supported'.format(region))
+
 
 class productLists(object):
     """
@@ -25,28 +39,31 @@ class productLists(object):
     """
 
     @staticmethod
-    def _getPage(partType, pageNum, returnMaxPageNum=False):
+    def _getPage(partType, pageNum, region="us", returnMaxPageNum=False):
         """
         A private method to GET, decode, and parse a page from pcpartpicker
         If returnMaxPageNum is True, this function will only return an Int
         """
         if partType not in productLookup:
             raise ValueError("partType invalid")
-        r = get(baseURL + "/products/" + partType + "/fetch?page=" + str(pageNum))
+
+        pcppURL = _getRegionURL(region)
+        r = get(pcppURL + "/products/" + partType + "/fetch?page=" + str(pageNum))
         parsed = jsonloads(r.content.decode("utf-8"))
+
         if returnMaxPageNum:
             return parsed["result"]["paging_data"]["page_blocks"][-1]["page"]
         return BeautifulSoup(parsed["result"]["html"], "html.parser")
-    
+
     @staticmethod
-    def totalPages(partType):
+    def totalPages(partType, region="us"):
         """
         Returns the total number of pages for partType
         """
-        return productLists._getPage(partType, 1, True)
+        return productLists._getPage(partType, 1, region, True)
 
     @staticmethod
-    def getProductList(partType, pageNum=0):
+    def getProductList(partType, pageNum=0, region="us"):
         """
         Returns results for pageNum. If pageNum is left to default, get all
         pages. pageNum starts at 1
@@ -57,8 +74,8 @@ class productLists(object):
             start_pageNum, end_pageNum = pageNum, pageNum
 
         cpuList = []
-        for pageNum in range(start_pageNum, end_pageNum+1):
-            soup = productLists._getPage(partType, pageNum)
+        for pageNum in range(start_pageNum, end_pageNum + 1):
+            soup = productLists._getPage(partType, pageNum, region)
             for row in soup.find_all("tr"):
                 cpuDetails = {}
                 for count, value in enumerate(row):
@@ -68,9 +85,9 @@ class productLists(object):
                         cpuDetails[productLookup[partType][count]] = text
                     elif count == 1:
                         cpuDetails["name"] = text
-                    elif count == len(row)-2:
+                    elif count == len(row) - 2:
                         cpuDetails["price"] = text
-                    elif count == len(row)-3:
+                    elif count == len(row) - 3:
                         cpuDetails["ratings"] = text.replace("(", "").replace(")", "")
                     else:
                         try:
