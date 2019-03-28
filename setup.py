@@ -12,8 +12,8 @@ with open(path.join(here, "README.rst"), encoding="utf-8") as f:
 
 setup(
     name="PCPartPicker_API",
-    version="0.1.0",
-    description="An unofficial API to access & scrape data from pcpartpicker.com",
+    version="0.1.1",
+    description="An unofficial Py3 API to scrape and retrieve information from pcpartpicker",
     long_description=long_description,
     url="https://github.com/thatguywiththatname/PcPartPicker-API",
     classifiers=[

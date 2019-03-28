@@ -1,12 +1,13 @@
-from json import loads as jsonloads
 from ._productsData import productLookup
+from json import loads as jsonloads
 from bs4 import BeautifulSoup
-from requests import get
+import requests
 
 
 def _getRegionURL(region):
     """
-    Returns the URL fo pcpartpicker.com requests for that region
+    A private function that returns the specific URL for pcpartpicker requests for that
+    region
     Supports (case insesetive):
         "au", "be", "ca", "de", "es", "fr", "in", "ie", "it", "nz", "uk", "us"
     """
@@ -29,74 +30,100 @@ def _getRegionURL(region):
             "https://" + ((region + ".") if region != "us" else "") + "pcpartpicker.com"
         )
     else:
-        raise ValueError('region "{}" not supported'.format(region))
+        raise ValueError(f'"{region}" is an invalid / unrecognized region')
 
 
 class productLists(object):
     """
-    For scraping product lists such as
-    https://pcpartpicker.com/products/cpu-cooler/
+    Scrape and retrieve information from pcpartpicker product lists
+    For example: https://pcpartpicker.com/products/cpu-cooler/
     """
 
     @staticmethod
-    def _getPage(partType, pageNum, region="us", returnMaxPageNum=False):
+    def _getPage(productType, pageNum=1, region="us"):
         """
-        A private method to GET, decode, and parse a page from pcpartpicker
-        If returnMaxPageNum is True, this function will only return an Int
+        A private method that returns the JSON for that particular page of that
+        particular product type
         """
-        if partType not in productLookup:
-            raise ValueError("partType invalid")
+        if productType not in productLookup:
+            raise ValueError(
+                f'"{productType}" is an invalid / unrecognized productType'
+            )
 
         pcppURL = _getRegionURL(region)
-        r = get(pcppURL + "/products/" + partType + "/fetch?page=" + str(pageNum))
+        r = requests.get(
+            pcppURL + "/products/" + productType + "/fetch?page=" + str(pageNum)
+        )
         parsed = jsonloads(r.content.decode("utf-8"))
 
-        if returnMaxPageNum:
-            return parsed["result"]["paging_data"]["page_blocks"][-1]["page"]
-        return BeautifulSoup(parsed["result"]["html"], "html.parser")
+        return parsed
 
     @staticmethod
-    def totalPages(partType, region="us"):
+    def getListInfo(productType, region="us"):
         """
-        Returns the total number of pages for partType
+        Returns a dict with the amount of pages for a product, as well as the number of
+        products in total in those pages
         """
-        return productLists._getPage(partType, 1, region, True)
+        data = productLists._getPage(productType, region=region)
+
+        totalProductCount = data["result"]["paging_data"]["total_count"]
+        amountOfProductPages = data["result"]["paging_data"]["page_blocks"][-1]["page"]
+
+        return {
+            "totalProductCount": totalProductCount,
+            "amountOfProductPages": amountOfProductPages,
+        }
 
     @staticmethod
-    def getProductList(partType, pageNum=0, region="us"):
+    def _getListHTML(productType, pageNum, region="us"):
         """
-        Returns results for pageNum. If pageNum is left to default, get all
-        pages. pageNum starts at 1
+        A private method that returns a requests_html HTML object for that particular
+        page of that particular product type
+        """
+        data = productLists._getPage(productType, pageNum, region)
+        return BeautifulSoup(data["result"]["html"], "html.parser")
+
+    @staticmethod
+    def getList(productType, pageNum=0, region="us"):
+        """
+        Returns all products for pageNum
+        If pageNum is left to default (0), it gets all pages
+        The pages start at 1
         """
         if pageNum == 0:
-            start_pageNum, end_pageNum = 1, productLists.totalPages(partType)
+            amountOfProductPages = productLists.getListInfo(productType)[
+                "amountOfProductPages"
+            ]
+            start_pageNum, end_pageNum = 1, amountOfProductPages
         else:
             start_pageNum, end_pageNum = pageNum, pageNum
 
-        cpuList = []
+        productList = []
         for pageNum in range(start_pageNum, end_pageNum + 1):
-            soup = productLists._getPage(partType, pageNum, region)
+            soup = productLists._getListHTML(productType, pageNum, region)
             for row in soup.find_all("tr"):
-                cpuDetails = {}
+                productDetails = {}
                 for count, value in enumerate(row):
                     text = value.get_text().strip()
 
-                    if count in productLookup[partType]:
-                        cpuDetails[productLookup[partType][count]] = text
+                    if count in productLookup[productType]:
+                        productDetails[productLookup[productType][count]] = text
                     elif count == 1:
-                        cpuDetails["name"] = text
+                        productDetails["name"] = text
                     elif count == len(row) - 2:
-                        cpuDetails["price"] = text
+                        productDetails["price"] = text
                     elif count == len(row) - 3:
-                        cpuDetails["ratings"] = text.replace("(", "").replace(")", "")
+                        productDetails["ratings"] = text.replace("(", "").replace(
+                            ")", ""
+                        )
                     else:
                         try:
                             if value.a["class"] == ["btn-mds", "pp_add_part"]:
-                                cpuDetails["id"] = value.a["href"].replace("#", "")
+                                productDetails["id"] = value.a["href"].replace("#", "")
                         except TypeError:
                             pass  # Not <a> tag
                         except KeyError:
                             pass  # No class
 
-                cpuList.append(cpuDetails)
-        return cpuList
+                productList.append(productDetails)
+        return productList

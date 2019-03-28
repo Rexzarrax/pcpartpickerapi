@@ -1,6 +1,9 @@
 """
-Each row contains multiple columns and the only way to know what the columns
-text is, is by numbering them (as they are always in the same order)
+When we get a page for a product, it returns a HTML table
+with different values in each row. This dict allows us to
+convert the row number into what the actual value is for
+This also allows you to lookup the different data that is
+provided for each product type
 """
 
 productLookup = {
