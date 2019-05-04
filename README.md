@@ -9,8 +9,12 @@ Currently this library contains these features:
 - The `productLists` class
   - Extract information from pages that are lists of products, as seen under the "browse by individual parts" tab on the PCPartPicker website (such as [products/cpu-cooler](https://pcpartpicker.com/products/cpu-cooler))
   - All product lists are supported except the ones under the "Software" catergory, although those may be supported in the future
-  - All regions supported by PCPartPicker are supported (au, be, ca, de, es, fr, in, ie, it, nz, uk, us) and can be requested by using the `region` paramter in public functions. The region defaults to "US"
+  - All regions supported by PCPartPicker are supported and can be requested by using the `region` paramter in public functions. The region defaults to "US"
   - All filters for product lists are supported (explained further in the documentation below)
+
+**Note about the words "product" and "part"**
+
+PCPartPicker seems to use these words somewhat interchangeably. For this API, I refer to the lists of parts on the website as "product lists", as for referring to individual parts, I refer to them as "parts"
 
 ## Installation
 
@@ -47,31 +51,43 @@ for cpu in cpu_info_uk:
 
 ## Documentation
 
-To start using the API, import `pcpartpicker` from `PCPartPicker_API`
+To start using the API, import the `pcpartpicker` file from the `PCPartPicker_API` module
 
-A list of `partType`s and their dictionary keys are available in [_productsData](https://github.com/thatguywiththatname/PcPartPicker-API/blob/master/PCPartPicker_API/_productsData.py)
+The `pcpartpicker` file contains these (public) classes / functions:
 
-`pcpartpicker` contains these (public) functions:
+Function name | Paramaters | Returns | Notes
+-|-|-|-
+`productLists.getList` | `partType, pageNum=0, region="us", partFilter=""` | A list of dictionaries containing information about each part | `pageNum` is set to `0` by default. `0` means it will iterate over all available pages.If you only want to get information from, for example, page 2 of the cpu results, you would set `pageNum` to `2`
+`productLists.getListInfo` | `partType, region="us", partFilter=""` | A dictionary with the keys `"pageCount"` and `"totalPartCount"` | `"pageCount"` is the total number of pages for that `partType`. `"totalPartCount"` Is the total number of parts in all of those pages
 
-Function name | Paramaters | Description
--|-|-
-`productLists.getList` | `partType, pageNum=0, region="us", productFilter=""` | This function returns a list of dictionaries. Each `partType` will have different dictionary keys. To see what keys exist for each `partType`, you can look them up in [_productsData](https://github.com/thatguywiththatname/PcPartPicker-API/blob/master/PCPartPicker_API/_productsData.py). Every dictionary will always contain the keys `name`, `price`, `ratings` and `id` (although they may not always have a value). `pageNum` is set to `0` by default. `0` means it will iterate over all available pages.If you only want to get information from, for example, page 2 of the cpu results, you would set `pageNum` to `2`
-`productLists.getListInfo` | `partType, region="us", productFilter=""` | Returns a dict with the amount of pages for a product, as well as the number of products in total in those pages. The keys are `"totalProductCount"` and `pageCount`
+### partType
 
-### Supported regions (case insensetive)
+Some of the functions require a `partType` parameter. This is used to determine what PC part type (CPU, PSU, etc.) you want to get information about
+
+If you request a product list using `productLists.getList`, the `partType` you select will decide what dictionary keys will be available to you for each dictionary in the returned list. For example, if you select `"cpu-cooler"` as your part type, the keys will be `"fan-rpm"` and `"noise level"` (as well as the default keys)
+
+To see what keys exist for each `partType`, you can look them up in [__partsData](https://github.com/thatguywiththatname/PcPartPicker-API/blob/master/PCPartPicker_API/__partsData.py)
+
+Every dictionary will always contain the default keys `name`, `price`, `ratings` and `id` (although they may not always have a value).
+
+### region
+
+The default region is `"us"`. All of these are case insensetive, i.e. you can use `"us"` or `"US"`, both will work
 
 `"au", "be", "ca", "de", "es", "fr", "in", "ie", "it", "nz", "uk", "us"`
 
-### productFilter
+### partFilter
 
-The `productFilter` parameter supports filters used by the PCPP website. For example, for this URL: 
+The `partFilter` parameter supports filters used by the PCPP website (it is not shortened to `filter` because that is a built-in function in Python)
+
+For example, for this URL: 
 
 https://pcpartpicker.com/products/cpu/#k=30&R=4
 
-the filter is `k=30&R=4` (this filters all LGA1151 socket CPUs with 4 stars)
+the filter is `k=30&R=4` (this filters all LGA1151 socket CPUs with 4 or more stars)
 
-To use this you would put it into the `productFilter` paramter
+To use this you would put it into the `partFilter` paramter
 
-`pcpp.productLists.getList("cpu", productFilter="k=30&R=4")`
+`pcpp.productLists.getList("cpu", partFilter="k=30&R=4")`
 
 If you want to filter for something specific, you will need to visit the PcPartPicker website and filter it by hand, and then the URL will contain the filter you want

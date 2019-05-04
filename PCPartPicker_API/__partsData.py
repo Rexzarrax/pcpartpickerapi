@@ -6,7 +6,7 @@ This also allows you to lookup the different data that is
 provided for each product type
 """
 
-productLookup = {
+partLookup = {
     "cpu": {
         2: "speed",
         3: "cores",
