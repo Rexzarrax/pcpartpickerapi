@@ -1,7 +1,6 @@
 """
 Scrape and retrieve information from pcpartpicker part lists
 For example: https://pcpartpicker.com/products/cpu-cooler/
-TODO: Support &sort= URL parameters?
 """
 
 from .__parts_data import part_lookup
@@ -65,7 +64,7 @@ def __get_list_html(part_type, page_num, region, part_filter):
     return BeautifulSoup(data["result"]["html"], "html.parser")
 
 
-def get_list_info(part_type, region="us", part_filter=""):
+def list_info(part_type, region="us", part_filter=""):
     """
     Returns a dictionary with information about the chosen part list
     """
@@ -84,7 +83,7 @@ def get_list(part_type, page_num=0, region="us", part_filter=""):
     The pages start at 1
     """
     if page_num == 0:
-        part_page_count = get_list_info(part_type, region, part_filter)["page_count"]
+        part_page_count = list_info(part_type, region, part_filter)["page_count"]
         start_page_num, end_page_num = 1, part_page_count
     else:
         start_page_num, end_page_num = page_num, page_num
@@ -131,3 +130,23 @@ def get_list(part_type, page_num=0, region="us", part_filter=""):
             part_dict_list.append(part_details)
 
     return part_dict_list
+
+
+def supported_part_types():
+    """
+    Returns a list of supported part_types
+    """
+    return list(part_lookup.keys())
+
+
+def supported_keys(part_type):
+    """
+    Returns a list of dictionary keys that the dictionaries from get_list will have
+    for that part_type
+    """
+    keys = list(part_lookup[part_type].values())
+    keys.append("name")
+    keys.append("id")
+    keys.append("price")
+    keys.append("ratings_count")
+    return keys
