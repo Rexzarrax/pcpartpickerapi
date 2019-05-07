@@ -2,7 +2,7 @@
 
 Python3 API for scraping and retrieving information from [PcPartPicker](https://pcpartpicker.com)
 
-## What can this API do?
+### What can this API do?
 
 Currently this library contains these features:
 
@@ -14,13 +14,13 @@ Currently this library contains these features:
 
 A quick note about the words "product" and "part", PCPartPicker seems to use these words somewhat interchangeably. For this API, all PC parts are referred to as "parts"
 
-# Installation
+## Installation
 
 `pip install pcpartpickerapi`
 
 See the PyPi page [here](https://pypi.org/project/pcpartpickerapi/)
 
-# Quickstart
+## Quickstart
 
 ```python
 from pcpartpickerapi import part_lists
@@ -46,7 +46,7 @@ for cpu in cpu_info_uk:
 
 ```
 
-# Documentation
+## Documentation
 
 The `pcpartpickerapi` module contains these (public) files / classes / functions:
 
@@ -57,19 +57,19 @@ Function name | Paramaters | Returns | Notes
 `part_lists.supported_part_types` | | List | A list of supported `part_type`s
 `part_lists.supported_keys` | `part_type` | List | Returns a list of dictionary keys that the dictionaries from `get_list` will have, e.g. `supported_keys("cpu")` will return `['speed', 'cores', 'tdp', 'name', 'id', 'price', 'ratings_count']`
 
-## Parameter Explanations
+### Parameter Explanations
 
-### part_type
+#### part_type
 
 This is what PC part type (`"cpu"`, `"cpu-cooler"`, etc.) you want to get information about
 
-### region
+#### region
 
 The default region is `"us"`. All of these are case insensetive, i.e. you can use `"us"` or `"US"`, both will work
 
 `"au", "be", "ca", "de", "es", "fr", "in", "ie", "it", "nz", "uk", "us"`
 
-### part_filter
+#### part_filter
 
 The `part_filter` parameter supports filters used by the PCPP website (it is not shortened to `filter` because that is a built-in function in Python)
 
