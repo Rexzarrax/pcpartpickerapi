@@ -99,8 +99,6 @@ def get_list(part_type, page=0, region="us", part_filter=""):
         table_row_count = table_df.shape[0]
         table_dict = table_df.to_dict()
 
-        print(table_df)
-
         for row_num in range(table_row_count):
 
             part_dict = {}
