@@ -29,7 +29,7 @@ cpu_list_info = part_lists.list_info("cpu")
 print("Total amount of CPU pages:", cpu_list_info["page_count"])
 
 # Pull info from page 1 of CPUs
-cpu_info = part_lists.get_list("cpu", page_num=1)
+cpu_info = part_lists.get_list("cpu", page=1)
 
 # Print the names and prices of all the CPUs on the page
 for cpu in cpu_info:
@@ -43,31 +43,25 @@ cpu_info_uk = part_lists.get_list("cpu", region="uk")
 # The prices will now be in GBP (£) instead of USD ($)
 for cpu in cpu_info_uk:
     print(cpu["name"], ":", cpu["price"])
-
 ```
 
 ## Documentation
 
 The `pcpartpickerapi` module contains these (public) files / classes / functions:
 
-Function name | Paramaters | Returns | Notes
--|-|-|-
-`part_lists.get_list` | `part_type, page_num=0, region="us", part_filter=""` | List | Returns a list of dictionaries containing information about each part. The `part_type` you select will determine what dictionary keys will be available to you for each dictionary in the returned list. If `page_num` is `0` it will iterate over all available pages
-`part_lists.list_info` | `part_type, region="us", part_filter=""` | A dictionary with the keys `"page_count"` and `"total_part_count"` | `"page_count"` is the total number of pages for that `part_type`. `"total_part_count"` Is the total number of parts in all of those pages
-`part_lists.supported_part_types` | | List | A list of supported `part_type`s
-`part_lists.supported_keys` | `part_type` | List | Returns a list of dictionary keys that the dictionaries from `get_list` will have, e.g. `supported_keys("cpu")` will return `['speed', 'cores', 'tdp', 'name', 'id', 'price', 'ratings_count']`
+Name | Type | Paramaters | Returns / Type | Notes
+-|-|-|-|-
+`part_lists.get_list` | Function | `part_type, page=0, region="us", part_filter=""` | List | Returns a list of dictionaries containing information about each part. The `part_type` you select will determine what dictionary keys will be available to you for each dictionary in the returned list. If `page` is `0` it will iterate over all available pages
+`part_lists.list_info` | Function | `part_type, region="us", part_filter=""` | A dictionary with the keys `"page_count"` and `"total_part_count"` | `"page_count"` is the total number of pages for that `part_type`. `"total_part_count"` Is the total number of parts in all of those pages
+`part_lists.supported_part_types` | Variable | | List | A list of supported `part_type`s
+`part_lists.supported_regions` | Variable | | List | A list of supported regions
+`part_lists.supported_keys` | Function | `part_type` | List | Returns a list of dictionary keys that the dictionaries from `get_list` will have when called with that `part_type`, e.g. `supported_keys("cpu")` will return `["name", "speed", "cores", "tdp", "ratings_count", "price"]`
 
 ### Parameter Explanations
 
 #### part_type
 
 This is what PC part type (`"cpu"`, `"cpu-cooler"`, etc.) you want to get information about
-
-#### region
-
-The default region is `"us"`. All of these are case insensetive, i.e. you can use `"us"` or `"US"`, both will work
-
-`"au", "be", "ca", "de", "es", "fr", "in", "ie", "it", "nz", "uk", "us"`
 
 #### part_filter
 
