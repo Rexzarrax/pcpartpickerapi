@@ -29,14 +29,14 @@ def __construct_url(part_type, page, region, part_filter):
     """
     Returns the specific pcpartpicker URL for the given parameters
     """
-    region = region.lower()
-
-    # TODO: Is this the best place to do these checks?
-    if region not in supported_regions:
-        raise ValueError(f'"{region}" is an invalid / unrecognized region')
+    part_type = part_type.strip().lower()
+    region = region.strip().lower()
 
     if part_type not in supported_part_types:
         raise ValueError(f'"{part_type}" is an invalid / unrecognized part_type')
+
+    if region not in supported_regions:
+        raise ValueError(f'"{region}" is an invalid / unrecognized part_type')
 
     pcpp_url = (
         "https://" + ("" if region == "us" else (region + ".")) + "pcpartpicker.com"
@@ -110,9 +110,8 @@ def get_list(part_type, page=0, region="us", part_filter=""):
                 # +1 because the 0th column is the row number
                 col_value = table_dict[col_num + 1][row_num]
 
-                # TODO: Is this the best way to do this?
+                # Remove "()" from the ratings count
                 if col_name == "ratings_count":
-                    # Remove "()" from the ratings count
                     col_value = col_value.replace("(", "")
                     col_value = col_value.replace(")", "")
 
@@ -128,4 +127,7 @@ def supported_keys(part_type):
     Returns a list of dictionary keys that the dictionaries from get_list will have
     for that part_type
     """
+    part_type = part_type.strip().lower()
+    if part_type not in supported_part_types:
+        raise ValueError(f'"{part_type}" is an invalid / unrecognized part_type')
     return part_type_column_names[part_type]
