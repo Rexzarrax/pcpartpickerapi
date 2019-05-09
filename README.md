@@ -35,9 +35,9 @@ cpu_info = part_lists.get_list("cpu", page=1)
 for cpu in cpu_info:
     print(cpu["name"], ":", cpu["price"])
 
-# Pull info from all CPU pages (this may take a minute)
+# Pull info from all CPU pages and make use of threading
 # Also pull this info from the UK region of the site
-cpu_info_uk = part_lists.get_list("cpu", region="uk")
+cpu_info_uk = part_lists.get_list("cpu", region="uk", use_threading=True)
 
 # Print the names and prices of all the CPUs on all pages
 # The prices will now be in GBP (£) instead of USD ($)
@@ -51,7 +51,7 @@ The `pcpartpickerapi` module contains these (public) files / classes / functions
 
 Name | Type | Paramaters | Returns / Type | Notes
 -|-|-|-|-
-`part_lists.get_list` | Function | `part_type, page=0, region="us", part_filter=""` | List | Returns a list of dictionaries containing information about each part. The `part_type` you select will determine what dictionary keys will be available to you for each dictionary in the returned list. If `page` is `0` it will iterate over all available pages
+`part_lists.get_list` | Function | `part_type, page=0, region="us", part_filter="", use_threading=False, thread_count=4` | List | Returns a list of dictionaries containing information about each part. The `part_type` you select will determine what dictionary keys will be available to you for each dictionary in the returned list. If `page` is `0` it will iterate over all available pages. If `use_threading` is `True`, `get_list` will attempt to use Python's `threading` module to parrelilize the downloading and parsing of pages, which should be much faster
 `part_lists.list_info` | Function | `part_type, region="us", part_filter=""` | A dictionary with the keys `"page_count"` and `"total_part_count"` | `"page_count"` is the total number of pages for that `part_type`. `"total_part_count"` Is the total number of parts in all of those pages
 `part_lists.supported_part_types` | Variable | | List | A list of supported `part_type`s
 `part_lists.supported_regions` | Variable | | List | A list of supported regions
@@ -59,9 +59,11 @@ Name | Type | Paramaters | Returns / Type | Notes
 
 ### Parameter Explanations
 
-#### part_type
+#### threading
 
-This is what PC part type (`"cpu"`, `"cpu-cooler"`, etc.) you want to get information about
+In `get_list`, the `use_threading` parameter is only useful if you are requesting multiple pages (by leaving `page` set to `0`)
+
+`thread_count` is the number of threads that will be used to parrelilize the process. If `thread_count` is `0` and `use_threading` is set to `True`, it will set `thread_count` to the number of pages you are requesting (so one thread for each page request)
 
 #### part_filter
 

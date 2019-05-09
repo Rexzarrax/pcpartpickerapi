@@ -6,7 +6,9 @@ For example: https://pcpartpicker.com/products/cpu-cooler/
 from .__parts_data import part_type_column_names
 from json import loads as jsonloads
 import pandas as pd
+import threading
 import requests
+import queue
 
 supported_part_types = list(part_type_column_names.keys())
 supported_regions = [
@@ -23,6 +25,26 @@ supported_regions = [
     "uk",
     "us",
 ]
+
+
+def supported_keys(part_type):
+    """
+    Returns a list of dictionary keys that the dictionaries from get_list will have
+    for that part_type
+    """
+    part_type = part_type.strip().lower()
+    if part_type not in supported_part_types:
+        raise ValueError(f'"{part_type}" is an invalid / unrecognized part_type')
+    return part_type_column_names[part_type]
+
+
+def __split_list(a, n):
+    """
+    Split the list a into n number of sub lists
+    https://stackoverflow.com/a/2135920/6396652
+    """
+    k, m = divmod(len(a), n)
+    return (a[i * k + min(i, m) : (i + 1) * k + min(i + 1, m)] for i in range(n))
 
 
 def __construct_url(part_type, page, region, part_filter):
@@ -71,18 +93,12 @@ def list_info(part_type, region="us", part_filter=""):
     return {"total_part_count": total_part_count, "page_count": page_count}
 
 
-def get_list(part_type, page=0, region="us", part_filter=""):
+def __dl_and_parse_pages(
+    part_type, start_page, end_page, region, part_filter, return_queue=None
+):
     """
-    Returns a list of dictionaries containing information about each part
-    If page is left to the default (0), it gets all pages
-    The pages start at 1
+    Download and parse the part list pages from start_page to end_page (inclusive)
     """
-    if page == 0:
-        part_page_count = list_info(part_type, region, part_filter)["page_count"]
-        start_page, end_page = 1, part_page_count
-    else:
-        start_page, end_page = page, page
-
     column_names = part_type_column_names[part_type]
     part_dict_list = []
 
@@ -119,15 +135,55 @@ def get_list(part_type, page=0, region="us", part_filter=""):
 
             part_dict_list.append(part_dict)
 
-    return part_dict_list
+    if return_queue:
+        return_queue.put(part_dict_list)
+    else:
+        return part_dict_list
 
 
-def supported_keys(part_type):
+def get_list(
+    part_type, page=0, region="us", part_filter="", use_threading=False, thread_count=4
+):
     """
-    Returns a list of dictionary keys that the dictionaries from get_list will have
-    for that part_type
+    Returns a list of dictionaries containing information about each part
+    The pages start at 1
+    If page is left to the default (0), it gets all pages
     """
-    part_type = part_type.strip().lower()
-    if part_type not in supported_part_types:
-        raise ValueError(f'"{part_type}" is an invalid / unrecognized part_type')
-    return part_type_column_names[part_type]
+    if page != 0:
+        return __dl_and_parse_pages(part_type, page, page, region, part_filter)
+
+    else:
+        page_count = list_info(part_type, region, part_filter)["page_count"]
+
+        if not use_threading or thread_count == 1 or thread_count < 0:
+            return __dl_and_parse_pages(part_type, 1, page_count, region, part_filter)
+
+        else:
+            if thread_count == 0 or thread_count > page_count:
+                thread_count = page_count
+
+            pages = [p for p in range(1, page_count + 1)]
+            page_chunks = list(__split_list(pages, thread_count))
+
+            threads = []
+            return_queue = queue.Queue()
+            for page_chunk in page_chunks:
+                t = threading.Thread(
+                    target=__dl_and_parse_pages,
+                    args=(
+                        part_type,
+                        page_chunk[0],
+                        page_chunk[-1],
+                        region,
+                        part_filter,
+                        return_queue,
+                    ),
+                )
+                t.daemon = True
+                threads.append(t)
+                t.start()
+
+            for t in threads:
+                t.join()
+
+            return return_queue.get()

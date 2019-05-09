@@ -22,7 +22,7 @@ requirements = requirements.split("\n")
 
 setup(
     name="pcpartpickerapi",
-    version="0.1.8",
+    version="0.1.9",
     description="An unofficial Py3 API to scrape and retrieve information from PCPartPicker",
     long_description=long_description,
     long_description_content_type="text/markdown",
