@@ -1,6 +1,6 @@
 # pcpartpickerapi
 
-Python3 API for scraping and retrieving information from [PcPartPicker](https://pcpartpicker.com)
+An unofficial Py3 API to scrape and retrieve information from [PcPartPicker](https://pcpartpicker.com)
 
 ### What can this API do?
 
